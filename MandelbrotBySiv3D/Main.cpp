@@ -65,6 +65,8 @@ void Main()
 {
 	Window::Resize(1920, 1080);
 
+	constexpr std::size_t maxIteration = 100;
+
 	Image image{ Scene::Size() };
 	Image smallImage{ Scene::Size() / 4 };
 	DynamicTexture texture{ image.size() };
@@ -97,7 +99,7 @@ void Main()
 			// 変更があったら smallImage を更新
 			smallUpdate = false;
 			update = true;
-			MakeMandelbrotImage(smallImage, region, 100);
+			MakeMandelbrotImage(smallImage, region, maxIteration);
 			smallTexture.fill(smallImage);
 			small = true;
 			makingThread = std::jthread{};
@@ -110,7 +112,7 @@ void Main()
 				using namespace std::chrono;
 				auto start = steady_clock::now();
 				// メインの処理を邪魔しないようにスレッドは半分だけ使う
-				MakeMandelbrotImage(image, region, 100, Threading::GetConcurrency() / 2, st);
+				MakeMandelbrotImage(image, region, maxIteration, Threading::GetConcurrency() / 2, st);
 				auto end = steady_clock::now();
 				if (not st.stop_requested())
 				{
